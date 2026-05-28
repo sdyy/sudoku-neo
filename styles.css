@@ -305,7 +305,16 @@ header {
 }
 
 .sudoku-cell.hovered {
-  background-color: var(--cell-bg-hover);
+  background-color: rgba(99, 102, 241, 0.45) !important;
+  color: #facc15 !important;
+  text-shadow: 0 0 8px rgba(250, 204, 21, 0.7);
+  z-index: 2;
+}
+
+[data-theme="light"] .sudoku-cell.hovered {
+  background-color: rgba(245, 158, 11, 0.25) !important;
+  color: #b45309 !important;
+  text-shadow: 0 0 4px rgba(245, 158, 11, 0.3);
 }
 
 .sudoku-cell.selected {
@@ -939,7 +948,7 @@ header {
     grid-template-columns: 1fr;
     height: 100%;
     max-height: 100dvh;
-    padding: 10px;
+    padding: 10px 4px;
     gap: 8px;
     display: flex;
     flex-direction: column;
@@ -1043,8 +1052,8 @@ header {
   }
   
   .sudoku-grid {
-    width: min(100vw - 20px, 44dvh) !important;
-    height: min(100vw - 20px, 44dvh) !important;
+    width: min(100vw - 8px, 46dvh) !important;
+    height: min(100vw - 8px, 46dvh) !important;
     max-width: none !important;
     margin: 0 auto;
     border-width: 2px;
@@ -1056,7 +1065,11 @@ header {
   }
   
   .sudoku-cell {
-    font-size: clamp(16px, 6vw, 24px);
+    font-size: clamp(20px, 7.2vw, 28px);
+  }
+
+  .candidate-cell {
+    font-size: clamp(9px, 2.2vw, 12px) !important;
   }
   
   /* Controls Panel mobile */
