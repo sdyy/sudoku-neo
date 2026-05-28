@@ -385,6 +385,21 @@ header {
   opacity: 0;
 }
 
+.candidate-cell.match-selected {
+  color: #fbbf24 !important;
+  background-color: rgba(251, 191, 36, 0.25) !important;
+  font-weight: 700 !important;
+  border-radius: 3px;
+  transform: scale(1.15);
+  text-shadow: 0 0 3px rgba(251, 191, 36, 0.5);
+}
+
+[data-theme="light"] .candidate-cell.match-selected {
+  color: #b45309 !important;
+  background-color: rgba(245, 158, 11, 0.25) !important;
+  text-shadow: 0 0 2px rgba(245, 158, 11, 0.3);
+}
+
 /* Shaking animation for mistakes */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }

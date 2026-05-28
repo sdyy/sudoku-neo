@@ -379,6 +379,14 @@ function renderGrid() {
           if (cellCands.includes(i)) {
             candCell.classList.add('active');
             
+            // Highlight candidate if it matches the selected cell's value
+            if (selectedCell) {
+              const selectedVal = board[selectedCell.r][selectedCell.c];
+              if (selectedVal !== 0 && selectedVal === i) {
+                candCell.classList.add('match-selected');
+              }
+            }
+            
             // Check if this candidate is eliminated by active hint
             if (activeHint && activeHint.eliminations) {
               const isEliminated = activeHint.eliminations.some(e => e.r === r && e.c === c && e.val === i);
