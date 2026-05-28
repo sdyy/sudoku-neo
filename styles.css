@@ -150,6 +150,23 @@ header {
   margin-top: 2px;
 }
 
+.version-badge {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  opacity: 0.7;
+  vertical-align: middle;
+  margin-left: 8px;
+  border: 1px solid var(--glass-border);
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  display: inline-block;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: var(--text-muted) !important;
+}
+
 .top-controls {
   display: flex;
   align-items: center;
@@ -234,8 +251,8 @@ header {
 /* Sudoku Grid */
 .sudoku-grid {
   display: grid;
-  grid-template-columns: repeat(9, 1fr);
-  grid-template-rows: repeat(9, 1fr);
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  grid-template-rows: repeat(9, minmax(0, 1fr));
   width: 100%;
   aspect-ratio: 1 / 1;
   background: var(--card-bg);
@@ -733,6 +750,12 @@ header {
     display: none; /* Hide subtitle to save space */
   }
   
+  .version-badge {
+    font-size: 9px !important;
+    padding: 0px 4px !important;
+    margin-left: 6px !important;
+  }
+  
   .top-controls {
     gap: 5px;
   }
@@ -809,14 +832,16 @@ header {
   }
   
   .sudoku-grid {
-    width: min(100vw - 20px, 39dvh) !important;
-    height: min(100vw - 20px, 39dvh) !important;
+    width: min(100vw - 20px, 44dvh) !important;
+    height: min(100vw - 20px, 44dvh) !important;
     max-width: none !important;
     margin: 0 auto;
     border-width: 2px;
     border-radius: 10px;
     aspect-ratio: 1 / 1;
     flex-shrink: 0;
+    grid-template-columns: repeat(9, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(9, minmax(0, 1fr)) !important;
   }
   
   .sudoku-cell {
@@ -876,10 +901,11 @@ header {
   .details-panel {
     padding: 8px 12px;
     border-radius: 8px;
-    max-height: 60px;
-    min-height: 45px;
+    max-height: 95px;
+    min-height: 50px;
     gap: 4px;
     flex-grow: 1;
+    overflow-y: auto;
   }
   
   .details-panel h3 {
