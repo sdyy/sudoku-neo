@@ -9,51 +9,38 @@
 
 ---
 
-## 行動版優化：手機單畫面免滾動版面（100dvh 滿版整合）
-### 遇到的瓶頸
-在手機等垂直窄螢幕裝置上，原先的格狀版面會被拆分成上下兩頁。玩家點選數獨格子後，必須手動向下滑動才能點選虛擬鍵盤輸入數字，嚴重影響遊戲流暢度。
+## 行動版優化與版面修復：解決 iOS Safari 彈性收縮 Bug (flex-shrink)
+### 遇到的問題
+1. **數獨盤面底部被切掉**：第三排九宮格底部的數字被大幅度裁切並與選擇難度選單重疊。
+2. **文字過小**：除數字之外的輔助文字字體過小，閱讀吃力。
+3. **底部空間未填滿**：在縮小盤面後，下方留有過多空白，而輸入按鍵與操作按鈕偏小。
 
-### 優化解決方案
-我們在 [styles.css](file:///C:/Users/10110012/Documents/antigravity/silly-carson/styles.css) 中為螢幕寬度小於 `600px` 的手機版面進行了重構：
-1. **單畫面鎖定 (100dvh)**：限制網頁整體高度恰好為 `100dvh` (Dynamic Viewport Height)，且設定 `overflow: hidden`，徹底免除任何滑動。
-2. **單列鍵盤 (1x9)**：將原本 3x3 佔空間的數字鍵盤，壓縮排列為**單橫列的 9 個數字按鍵 (1-9)**。按鍵寬度自動適配手機觸碰區域。
-3. **單列功能列 (1x7)**：將所有的輔助工具（復原、重做、擦除、草稿、自動草稿、清空草稿、提示）壓縮為**單一橫列的 7 個按鍵**，並使用 `!important` 強制覆蓋 `#hintBtn` 的 inline 雙格佔位屬性，使其完全整齊對齊。
-4. **數獨盤面比例限制**：數獨網格最大尺寸限制為 `min(100%, 42dvh)`，騰出充足的垂直空間給鍵盤與輔助說明面板，確保手機上能一眼看清所有控制項。
+### 解決方案
+我們在 [styles.css](file:///C:/Users/10110012/Documents/antigravity/silly-carson/styles.css) 中進行了深度的佈局最佳化：
+1. **阻斷彈性收縮 (`flex-shrink: 0`)**：在手機版中，為 `.board-panel` 和 `.sudoku-grid` 強制設定 `flex-shrink: 0`。這能徹底防止瀏覽器在計算彈性盒子高度限制時，強行將數獨盤面的容器高度壓縮，解決了盤面底部被裁切並被下方選單重疊的 Bug。
+2. **微調數獨盤面比例 (`39dvh`)**：將盤面鎖定為 `39dvh`，在確保不被擠壓的前提下，提供手機端最大化且不溢出的精準視覺尺寸。
+3. **擴大輸入區域與按鍵字體**：
+   * 數字鍵盤高度增加（`padding: 12px 0`），按鍵數字字體加大至 **`20px`**，操作更具反饋感，完美填補了底部多餘的留白。
+   * 工具列按鈕高度增加（`padding: 8px 0`），文字大小提升至 **`10px - 11px`**。
+4. **提升非數字文字可讀性**：
+   * 行動版資訊欄標籤 `.info-label` 提升至 `10px`，數值 `.info-value` 提升至 `14px`。
+   * 下方「解題指南 & 提示說明」面板標題提升至 `12px`，內容字體提升至 `11px`。
+5. **動態剩餘空間填充**：將 `.details-panel` 設為 `flex-grow: 1`，使其自動伸展並填滿手機最底部的所有賸餘空間，讓版面架構更顯飽滿均衡。
 
 ---
 
 ## 互動修復：解決點擊格子無選取反應 Bug
-### 原因分析
-這是一個經典的 **JavaScript DOM 氣泡事件與重繪衝突 Bug**：
-1. 當點擊一個格子 (`sudoku-cell`) 時，觸發該格子的 `click` 監聽器。
-2. 該監聽器會將 `selectedCell` 設為該格子坐標，並調用 `renderGrid()`。
-3. `renderGrid()` 會將容器 `.sudoku-grid` 的 `innerHTML` 清空並**重新創建所有格子的 DOM 元素**，這導致原本被點擊的格子元素被從 DOM 樹中銷毀。
-4. 點擊事件繼續向上氣泡傳播至 `document`。
-5. `document` 的點擊監聽器（用來處理點選空白處取消選取的邏輯）被觸發。
-6. `document` 監聽器內部執行 `gridEl.contains(e.target)` 檢測。由於被點選的格子已經被第一步的 `renderGrid()` 銷毀，它已經不屬於網格甚至不屬於 document body，這導致檢測返回 `false`（誤判為「點擊網格外部」），從而立刻將 `selectedCell` 設回 `null` 並再次重繪。選取狀態因此被瞬間重置，導致玩家看起來沒有任何反應。
-
-### 解決方案
-我們在 [app.js](file:///C:/Users/10110012/Documents/antigravity/silly-carson/app.js) 中實作了以下兩項修復：
-1. **阻斷氣泡傳播 (`e.stopPropagation()`)**：在格子的 `click` 監聽器中調用 `e.stopPropagation()`，阻斷事件氣泡傳播至 `document`，避免觸發全域取消選取的邏輯。
-2. **DOM 孤立元素防禦**：在 `document` 全域點擊監聽器中，新增對點擊目標是否仍存在於 body 內部的檢測 (`if (!document.body.contains(e.target)) return;`)。若目標因重繪被銷毀（此時不屬於 body），則不進行清除選取操作，此舉提供了更為穩健的防禦。
+### 原因分析與解決方案
+經典的 **JavaScript DOM 氣泡事件與重繪衝突 Bug**：
+1. 格子點擊後立刻調用 `renderGrid()` 重置 DOM 樹，導致被點擊的格子元素被移出。
+2. 氣泡傳播到 `document`，因點擊元素已不存在於 document body，誤判為「點擊網格外部」，從而立刻清空選取狀態。
+3. **修復**：在格子的 `click` 監聽器中加入 `e.stopPropagation()` 阻斷氣泡傳播，並在 `document` 全域監聽中加入 `if (!document.body.contains(e.target)) return;` 進行孤立元素防禦。
 
 ---
 
 ## 視覺優化：顯著增強格點選取與定位線對比度
-### 優化解決方案
-我們在 [styles.css](file:///C:/Users/10110012/Documents/antigravity/silly-carson/styles.css) 中進行了針對性的樣式重構：
-1. **霓虹青色發光選取框**：點選格子後，將原先暗淡的紫色改為亮麗的**霓虹青色** (`--accent-hover`)。使用 `3px` 粗細的內縮陰影與 `15px` 的外發光暈效果 (`box-shadow`)，並將 `z-index` 提升至 `5` 覆蓋相鄰邊框，使選取的格子產生明顯的發光懸浮立體感。
-2. **十字定位輔助線亮度增強**：將十字定位線的背景透明度從原先的 `5% - 7%` 提高至 **`10% - 15%`**，讓同列同行的輔助對焦更加清晰醒目。
-3. **相同數字點亮增強**：當選取某個數字時，盤面上其他相同數字的背景高亮透明度從 `12% - 15%` 翻倍提升至 **`22% - 30%`**。
-
----
-
-## 關鍵修復：解決本地 `file://` 協議下的 Web Worker 載入問題
-### 優雅降級（Fallback）解決方案
-我們在 [app.js](file:///C:/Users/10110012/Documents/antigravity/silly-carson/app.js) 中實作了**雙重防禦的主執行緒降級機制**：
-1. **同步建構防禦 (Sync Try-Catch)**：當建構因安全性限制拋出 `SecurityError` 時，直接捕獲並自動切換至「主執行緒生成模式」。
-2. **非同步載入防禦 (Async onerror)**：監聽 Worker 的 `onerror` 事件，若建構成功但內部因無法讀取 `sudoku.js` 時，同樣會自動中止該 Worker 並切換至「主執行緒生成模式」。
-3. **優雅 UI 緩衝**：主執行緒生成前會透過 `setTimeout(..., 100)` 釋放執行緒，讓瀏覽器有足夠時間繪製出「正在本地端計算結構 (主執行緒模式)...」字樣與旋轉動畫。
+- **霓虹青色發光選取框**：點選格子改用霓虹青色 (`--accent-hover`)，配合 `3px` 內縮陰影與 `15px` 外發光暈 (`box-shadow`) 配合 `z-index: 5` 提升懸浮層次感。
+- **定位對焦線**：將行列十字定位線不透明度提高至 `10% - 15%`，相同數字高亮不透明度提高至 `22% - 30%`。
 
 ---
 
@@ -61,22 +48,18 @@
 
 ### 1. 核心解題與生成引擎 (`sudoku.js`)
 - [sudoku.js](file:///C:/Users/10110012/Documents/antigravity/silly-carson/sudoku.js)
-- **回溯法解題器 (Backtracking Solver)**：用於在生成謎題時計算盤面的解的數量，確保每個數獨都具有「唯一解」。
-- **邏輯解題器 (Logical Solver)**：模擬人類解題策略（Easy 到 Expert 等八大邏輯技巧）。
-- **動態停止挖洞**：在維持唯一解的前提下，符合目標難度與線索數即停止，顯著加快了主執行緒同步生成的速度。
+- **回溯法解題器**：計算唯一解。
+- **邏輯解題器**：支援 8 大進階邏輯解題技巧提示。
 
 ### 2. 背景線程 Worker (`generator.worker.js`)
 - [generator.worker.js](file:///C:/Users/10110012/Documents/antigravity/silly-carson/generator.worker.js)
-- 若在 HTTP 伺服器環境運行，自動使用 Web Worker 在後台異步運算，防範頁面卡頓。
 
 ### 3. Glassmorphism 設計與排版 (`styles.css` 與 `index.html`)
 - [index.html](file:///C:/Users/10110012/Documents/antigravity/silly-carson/index.html)
 - [styles.css](file:///C:/Users/10110012/Documents/antigravity/silly-carson/styles.css)
-- 具備毛玻璃效果、3x3 格內草稿數字微縮、純本地內嵌 SVG 圖標（100% 離線可用）以及深/淺色主題一鍵切換。
 
 ### 4. 遊戲互動與輔助功能 (`app.js`)
 - [app.js](file:///C:/Users/10110012/Documents/antigravity/silly-carson/app.js)
-- 支援輔助草稿填寫、無限步復原重做（Undo/Redo，上限 50 步）、自動存檔 (`localStorage`) 以及「視覺標記教學式提示系統」。
 
 ---
 
