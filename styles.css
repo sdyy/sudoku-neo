@@ -711,8 +711,8 @@ header {
     grid-template-columns: 1fr;
     height: 100%;
     max-height: 100dvh;
-    padding: 8px;
-    gap: 6px;
+    padding: 10px;
+    gap: 8px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -722,10 +722,11 @@ header {
   
   header {
     padding-bottom: 4px;
+    flex-shrink: 0;
   }
   
   .logo-section h1 {
-    font-size: 18px;
+    font-size: 20px;
   }
   
   .logo-section p {
@@ -737,8 +738,8 @@ header {
   }
   
   .theme-btn {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     border-radius: 6px;
   }
   
@@ -749,53 +750,54 @@ header {
   
   /* Game Setup compact */
   .game-setup {
-    gap: 6px;
+    gap: 8px;
+    flex-shrink: 0;
   }
   
   .difficulty-select {
-    padding: 6px 10px;
-    font-size: 12px;
+    padding: 8px 12px;
+    font-size: 14px;
     border-radius: 8px;
   }
   
   .btn-new-game {
-    padding: 6px 12px;
-    font-size: 12px;
+    padding: 8px 16px;
+    font-size: 14px;
     border-radius: 8px;
   }
   
   /* Info Bar compact */
   .info-bar {
-    padding: 6px 10px;
+    padding: 8px 12px;
     border-radius: 8px;
-    gap: 6px;
+    gap: 8px;
   }
   
   .info-item {
-    gap: 1px;
+    gap: 2px;
   }
   
   .info-label {
-    font-size: 8px;
+    font-size: 10px;
   }
   
   .info-value {
-    font-size: 12px;
+    font-size: 14px;
   }
   
   .info-value.timer {
-    font-size: 13px;
+    font-size: 15px;
   }
   
   #pauseToggleBtn {
-    width: 18px !important;
-    height: 18px !important;
+    width: 20px !important;
+    height: 20px !important;
     border-radius: 4px !important;
   }
   
   #pauseToggleBtn svg {
-    width: 10px !important;
-    height: 10px !important;
+    width: 11px !important;
+    height: 11px !important;
   }
   
   /* Sudoku Grid mobile sizing */
@@ -803,50 +805,54 @@ header {
     gap: 0;
     width: 100%;
     flex-grow: 0;
+    flex-shrink: 0;
   }
   
   .sudoku-grid {
-    width: min(100vw - 26px, 36.5dvh) !important;
-    height: min(100vw - 26px, 36.5dvh) !important;
+    width: min(100vw - 20px, 39dvh) !important;
+    height: min(100vw - 20px, 39dvh) !important;
     max-width: none !important;
     margin: 0 auto;
     border-width: 2px;
-    border-radius: 8px;
+    border-radius: 10px;
     aspect-ratio: 1 / 1;
+    flex-shrink: 0;
   }
   
   .sudoku-cell {
-    font-size: clamp(15px, 5.5vw, 22px);
+    font-size: clamp(16px, 6vw, 24px);
   }
   
   /* Controls Panel mobile */
   .controls-panel {
-    gap: 6px;
+    gap: 8px;
     flex-grow: 1;
+    flex-shrink: 0;
     justify-content: flex-start;
   }
   
   /* Action buttons: Single row of 7 buttons! */
   .action-grid {
     grid-template-columns: repeat(7, 1fr) !important;
-    gap: 3px !important;
+    gap: 4px !important;
     width: 100%;
+    flex-shrink: 0;
   }
   
   .action-btn {
-    padding: 6px 0;
-    font-size: 9px;
+    padding: 8px 0;
+    font-size: 11px;
     border-radius: 8px;
-    gap: 3px;
+    gap: 4px;
   }
   
   .action-btn svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
   }
   
   .action-btn span {
-    font-size: 8px;
+    font-size: 10px;
   }
   
   #hintBtn {
@@ -856,30 +862,32 @@ header {
   /* Keypad: Single row of 9 buttons! */
   .keypad {
     grid-template-columns: repeat(9, 1fr) !important;
-    gap: 3px !important;
+    gap: 4px !important;
+    flex-shrink: 0;
   }
   
   .keypad-btn {
-    padding: 8px 0;
-    font-size: 16px;
+    padding: 12px 0;
+    font-size: 20px;
     border-radius: 8px;
   }
   
   /* Details Panel compact */
   .details-panel {
-    padding: 6px 10px;
+    padding: 8px 12px;
     border-radius: 8px;
-    max-height: 52px;
-    min-height: 40px;
-    gap: 2px;
+    max-height: 60px;
+    min-height: 45px;
+    gap: 4px;
+    flex-grow: 1;
   }
   
   .details-panel h3 {
-    font-size: 10px;
+    font-size: 12px;
   }
   
   .details-content {
-    font-size: 10px;
-    line-height: 1.2;
+    font-size: 11px;
+    line-height: 1.3;
   }
 }
