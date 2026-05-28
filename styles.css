@@ -694,3 +694,180 @@ header {
   font-weight: 600;
   color: var(--accent-hover);
 }
+
+/* MOBILE RESPONSIVE OPTIMIZATION */
+@media (max-width: 600px) {
+  body {
+    padding: 5px;
+    height: 100dvh;
+    overflow: hidden;
+  }
+  
+  .app-container {
+    grid-template-columns: 1fr;
+    height: 100%;
+    max-height: 100dvh;
+    padding: 12px;
+    gap: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+  
+  header {
+    padding-bottom: 5px;
+  }
+  
+  .logo-section h1 {
+    font-size: 20px;
+  }
+  
+  .logo-section p {
+    display: none; /* Hide subtitle to save space */
+  }
+  
+  .top-controls {
+    gap: 5px;
+  }
+  
+  .theme-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+  }
+  
+  .theme-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  /* Game Setup compact */
+  .game-setup {
+    gap: 8px;
+  }
+  
+  .difficulty-select {
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+  
+  .btn-new-game {
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+  
+  /* Info Bar compact */
+  .info-bar {
+    padding: 8px 12px;
+    border-radius: 10px;
+    gap: 8px;
+  }
+  
+  .info-item {
+    gap: 2px;
+  }
+  
+  .info-label {
+    font-size: 9px;
+  }
+  
+  .info-value {
+    font-size: 13px;
+  }
+  
+  .info-value.timer {
+    font-size: 14px;
+  }
+  
+  #pauseToggleBtn {
+    width: 22px !important;
+    height: 22px !important;
+    border-radius: 6px !important;
+  }
+  
+  /* Sudoku Grid mobile sizing */
+  .board-panel {
+    gap: 0;
+    width: 100%;
+    flex-grow: 0;
+  }
+  
+  .sudoku-grid {
+    width: 100%;
+    max-width: min(100%, 42dvh);
+    margin: 0 auto;
+    border-width: 2px;
+    border-radius: 12px;
+  }
+  
+  .sudoku-cell {
+    font-size: clamp(16px, 6vw, 24px);
+  }
+  
+  /* Controls Panel mobile */
+  .controls-panel {
+    gap: 8px;
+    flex-grow: 1;
+    justify-content: flex-end;
+  }
+  
+  /* Action buttons: Single row of 7 buttons! */
+  .action-grid {
+    grid-template-columns: repeat(7, 1fr) !important;
+    gap: 4px !important;
+    width: 100%;
+  }
+  
+  .action-btn {
+    padding: 8px 0;
+    font-size: 10px;
+    border-radius: 10px;
+    gap: 4px;
+  }
+  
+  .action-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .action-btn span {
+    font-size: 9px;
+  }
+  
+  #hintBtn {
+    grid-column: span 1 !important;
+  }
+  
+  /* Keypad: Single row of 9 buttons! */
+  .keypad {
+    grid-template-columns: repeat(9, 1fr) !important;
+    gap: 4px !important;
+  }
+  
+  .keypad-btn {
+    padding: 10px 0;
+    font-size: 18px;
+    border-radius: 10px;
+  }
+  
+  /* Details Panel compact */
+  .details-panel {
+    padding: 10px 12px;
+    border-radius: 12px;
+    max-height: 70px;
+    min-height: 55px;
+    gap: 4px;
+  }
+  
+  .details-panel h3 {
+    font-size: 11px;
+  }
+  
+  .details-content {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+}
