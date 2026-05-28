@@ -642,8 +642,58 @@ function triggerHint() {
   }
   
   if (state.steps && state.steps.length > 0) {
-    // Grab the first logical step
-    const step = state.steps[0];
+    // Find the first logical step whose eliminations or cell values are not yet completed by the user
+    let step = null;
+    for (const s of state.steps) {
+      // 1. If it's a cell filling step, check if the cell is still empty
+      if (s.value !== undefined && s.cell) {
+        if (board[s.cell.r][s.cell.c] === 0) {
+          step = s;
+          break;
+        }
+      }
+      // 2. If it's an elimination step, check if any of the proposed eliminations are still present in user candidates
+      if (s.eliminations && s.eliminations.length > 0) {
+        const isUseful = s.eliminations.some(e => {
+          const cellCands = candidates[e.r][e.c];
+          return cellCands && cellCands.includes(e.val);
+        });
+        if (isUseful) {
+          step = s;
+          break;
+        }
+      }
+    }
+    
+    // If all logical steps have already had their target candidates eliminated by the user,
+    // fallback to a backtracking fill-cell hint.
+    if (!step) {
+      let hintFound = false;
+      for (let r = 0; r < 9; r++) {
+        for (let c = 0; c < 9; c++) {
+          if (board[r][c] === 0) {
+            const correctVal = solution[r][c];
+            activeHint = {
+              technique: 'Backtracking Fallback',
+              highlightCells: [{ r, c, role: 'target' }],
+              eliminations: []
+            };
+            renderGrid();
+            detailsContent.innerHTML = `
+              <h3>💡 提示（回溯推導）</h3><br>
+              <b>應用技巧：</b>唯一推導 (Fallback)<br><br>
+              當前盤面剩餘的邏輯推導排除步驟您均已手動完成！根據唯一解路徑：<br>
+              儲存格 <b>(R${r+1}, C${c+1})</b> 必須填入數字 <b style="color: var(--accent-hover); font-size:15px;">${correctVal}</b>。
+            `;
+            hintFound = true;
+            break;
+          }
+        }
+        if (hintFound) break;
+      }
+      return;
+    }
+    
     activeHint = step;
     
     // Custom highlights
