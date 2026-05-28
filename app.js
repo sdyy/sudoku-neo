@@ -558,6 +558,16 @@ function checkWinCondition() {
   statMistakes.textContent = `${mistakes} / ${maxMistakes}`;
   statTechnique.textContent = highestTechnique;
   
+  // Save game record to local storage
+  saveRecord({
+    id: Math.random().toString(36).substring(2, 11),
+    timestamp: Date.now(),
+    difficulty: currentDifficulty,
+    duration: secondsElapsed,
+    mistakes: mistakes,
+    technique: highestTechnique
+  });
+  
   successOverlay.classList.add('active');
   localStorage.removeItem('sudoku_neo_save'); // Clear saved game on success
 }
@@ -736,6 +746,41 @@ function initEventListeners() {
   // Theme toggle
   themeToggle.addEventListener('click', toggleTheme);
   
+  // Stats Modal Events
+  const statsToggleBtn = document.getElementById('statsToggleBtn');
+  const statsOverlay = document.getElementById('statsOverlay');
+  const closeStatsBtn = document.getElementById('closeStatsBtn');
+  const clearStatsBtn = document.getElementById('clearStatsBtn');
+  
+  if (statsToggleBtn && statsOverlay) {
+    statsToggleBtn.addEventListener('click', () => {
+      renderStats();
+      statsOverlay.style.display = 'flex';
+      // Auto pause if game is running
+      if (!isPaused && timerInterval) {
+        togglePause();
+      }
+    });
+  }
+  
+  if (closeStatsBtn && statsOverlay) {
+    closeStatsBtn.addEventListener('click', () => {
+      statsOverlay.style.display = 'none';
+      // Auto resume if paused by opening stats
+      if (isPaused && pauseOverlay.style.display !== 'flex' && !successOverlay.classList.contains('active')) {
+        togglePause();
+      }
+    });
+  }
+  
+  if (clearStatsBtn) {
+    clearStatsBtn.addEventListener('click', () => {
+      if (confirm('確定要清除所有的歷史通關紀錄與個人最佳戰績嗎？此動作無法復原。')) {
+        clearRecords();
+      }
+    });
+  }
+  
   // Game control buttons
   newGameBtn.addEventListener('click', () => {
     startNewGame(difficultySelect.value);
@@ -872,4 +917,128 @@ function initEventListeners() {
       renderGrid();
     }
   });
+}
+
+// ==========================================
+// Records & Statistics System
+// ==========================================
+function loadRecords() {
+  try {
+    const raw = localStorage.getItem('sudoku_neo_records');
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    console.error('Failed to load records:', e);
+    return [];
+  }
+}
+
+function saveRecord(record) {
+  try {
+    const records = loadRecords();
+    records.unshift(record); // Add new record at the top
+    localStorage.setItem('sudoku_neo_records', JSON.stringify(records));
+  } catch (e) {
+    console.error('Failed to save record:', e);
+  }
+}
+
+function clearRecords() {
+  try {
+    localStorage.removeItem('sudoku_neo_records');
+    renderStats();
+  } catch (e) {
+    console.error('Failed to clear records:', e);
+  }
+}
+
+function renderStats() {
+  const records = loadRecords();
+  
+  // 1. Calculate best times and average mistakes for each difficulty
+  const summary = {
+    'Easy': { bestTime: null, totalMistakes: 0, count: 0 },
+    'Medium': { bestTime: null, totalMistakes: 0, count: 0 },
+    'Hard': { bestTime: null, totalMistakes: 0, count: 0 },
+    'Expert': { bestTime: null, totalMistakes: 0, count: 0 }
+  };
+  
+  records.forEach(rec => {
+    const diff = rec.difficulty;
+    if (summary[diff]) {
+      summary[diff].count++;
+      summary[diff].totalMistakes += rec.mistakes;
+      if (summary[diff].bestTime === null || rec.duration < summary[diff].bestTime) {
+        summary[diff].bestTime = rec.duration;
+      }
+    }
+  });
+  
+  // Update UI stats cards
+  const difficulties = ['Easy', 'Medium', 'Hard', 'Expert'];
+  difficulties.forEach(diff => {
+    const data = summary[diff];
+    const bestTimeSpan = document.getElementById(`bestTime${diff}`);
+    const avgMistakesSpan = document.getElementById(`avgMistakes${diff}`);
+    
+    if (bestTimeSpan && avgMistakesSpan) {
+      if (data.count > 0) {
+        // Format best time
+        const mins = Math.floor(data.bestTime / 60).toString().padStart(2, '0');
+        const secs = (data.bestTime % 60).toString().padStart(2, '0');
+        bestTimeSpan.textContent = `${mins}:${secs}`;
+        
+        // Format avg mistakes (round to 1 decimal place)
+        const avg = (data.totalMistakes / data.count).toFixed(1);
+        avgMistakesSpan.textContent = `${avg} 次`;
+      } else {
+        bestTimeSpan.textContent = '--:--';
+        avgMistakesSpan.textContent = '--';
+      }
+    }
+  });
+  
+  // 2. Render recent history table
+  const tbody = document.getElementById('historyTableBody');
+  const noHistoryMsg = document.getElementById('noHistoryMsg');
+  
+  if (tbody && noHistoryMsg) {
+    tbody.innerHTML = '';
+    
+    // Show last 15 records
+    const recentRecords = records.slice(0, 15);
+    if (recentRecords.length === 0) {
+      noHistoryMsg.style.display = 'block';
+    } else {
+      noHistoryMsg.style.display = 'none';
+      recentRecords.forEach(rec => {
+        const tr = document.createElement('tr');
+        
+        // Date formatting (MM/DD HH:MM)
+        const date = new Date(rec.timestamp);
+        const mm = (date.getMonth() + 1).toString().padStart(2, '0');
+        const dd = date.getDate().toString().padStart(2, '0');
+        const hh = date.getHours().toString().padStart(2, '0');
+        const min = date.getMinutes().toString().padStart(2, '0');
+        const dateStr = `${mm}/${dd} ${hh}:${min}`;
+        
+        // Duration formatting
+        const recMins = Math.floor(rec.duration / 60).toString().padStart(2, '0');
+        const recSecs = (rec.duration % 60).toString().padStart(2, '0');
+        const timeStr = `${recMins}:${recSecs}`;
+        
+        // Difficulty badge and name mapping
+        const diffClass = rec.difficulty.toLowerCase();
+        const diffName = getDifficultyName(rec.difficulty);
+        
+        tr.innerHTML = `
+          <td class="hide-mobile">${dateStr}</td>
+          <td><span class="diff-badge ${diffClass}">${diffName}</span></td>
+          <td>${timeStr}</td>
+          <td>${rec.mistakes} / 3</td>
+          <td class="hide-mobile" style="color: var(--text-muted); font-size: 11px;">${rec.technique || '--'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+  }
 }
