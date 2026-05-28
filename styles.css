@@ -1,0 +1,696 @@
+/* Styles for Sudoku Neo */
+
+/* Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Dark theme variables (Default) */
+  --bg-gradient: radial-gradient(circle at 50% 50%, #151528 0%, #0d0d16 100%);
+  --glass-bg: rgba(22, 22, 45, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: rgba(0, 0, 0, 0.4);
+  --text-main: #e2e8f0;
+  --text-muted: #94a3b8;
+  --primary: #8b5cf6;
+  --primary-hover: #a78bfa;
+  --primary-glow: rgba(139, 92, 246, 0.4);
+  --accent: #06b6d4;
+  --accent-hover: #22d3ee;
+  
+  --grid-border-thick: #6366f1;
+  --grid-border-thin: #312e81;
+  --cell-bg-original: rgba(255, 255, 255, 0.03);
+  --cell-bg-user: transparent;
+  --cell-bg-hover: rgba(99, 102, 241, 0.3);
+  --cell-bg-selected: rgba(6, 182, 212, 0.25);
+  --cell-bg-highlighted: rgba(99, 102, 241, 0.15);
+  --cell-bg-conflict: rgba(239, 68, 68, 0.2);
+  
+  /* Highlighting states for hints */
+  --cell-bg-hint-target: rgba(34, 197, 94, 0.35); /* Green */
+  --cell-bg-hint-source: rgba(234, 179, 8, 0.3); /* Yellow */
+  --cell-bg-hint-related: rgba(59, 130, 246, 0.25); /* Blue */
+  --cell-bg-hint-eliminated: rgba(239, 68, 68, 0.3); /* Reddish */
+  
+  --text-original: #f8fafc;
+  --text-user: #38bdf8;
+  --text-candidate: #64748b;
+  --text-conflict: #ef4444;
+  
+  --card-bg: rgba(30, 30, 60, 0.35);
+  
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+}
+
+[data-theme="light"] {
+  /* Light theme variables */
+  --bg-gradient: radial-gradient(circle at 50% 50%, #f1f5f9 0%, #e2e8f0 100%);
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(99, 102, 241, 0.15);
+  --glass-shadow: rgba(15, 23, 42, 0.08);
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --primary-glow: rgba(99, 102, 241, 0.25);
+  --accent: #0891b2;
+  --accent-hover: #0e7490;
+  
+  --grid-border-thick: #4f46e5;
+  --grid-border-thin: #cbd5e1;
+  --cell-bg-original: rgba(0, 0, 0, 0.04);
+  --cell-bg-user: transparent;
+  --cell-bg-hover: rgba(99, 102, 241, 0.22);
+  --cell-bg-selected: rgba(6, 182, 212, 0.20);
+  --cell-bg-highlighted: rgba(99, 102, 241, 0.10);
+  --cell-bg-conflict: rgba(239, 68, 68, 0.15);
+  
+  --cell-bg-hint-target: rgba(34, 197, 94, 0.25);
+  --cell-bg-hint-source: rgba(234, 179, 8, 0.25);
+  --cell-bg-hint-related: rgba(59, 130, 246, 0.18);
+  --cell-bg-hint-eliminated: rgba(239, 68, 68, 0.2);
+  
+  --text-original: #0f172a;
+  --text-user: #2563eb;
+  --text-candidate: #64748b;
+  --text-conflict: #dc2626;
+  
+  --card-bg: rgba(255, 255, 255, 0.6);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  user-select: none;
+}
+
+body {
+  background: var(--bg-gradient);
+  min-height: 100vh;
+  color: var(--text-main);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow-x: hidden;
+  transition: background var(--transition-normal);
+}
+
+/* Base Glass Container */
+.app-container {
+  width: 100%;
+  max-width: 1100px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px var(--glass-shadow);
+  padding: 30px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 30px;
+  position: relative;
+  transition: all var(--transition-normal);
+}
+
+@media (max-width: 900px) {
+  .app-container {
+    grid-template-columns: 1fr;
+    padding: 20px;
+    gap: 20px;
+  }
+}
+
+/* Header & Meta Panel */
+header {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 15px;
+}
+
+.logo-section h1 {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #a78bfa 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.5px;
+}
+
+.logo-section p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.top-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Theme Toggle Button */
+.theme-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.theme-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+  box-shadow: 0 0 10px var(--primary-glow);
+}
+
+.theme-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* Game Info Display */
+.info-bar {
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.info-value.timer {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}
+
+/* Game Board Panel */
+.board-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* Sudoku Grid */
+.sudoku-grid {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--card-bg);
+  border: 3px solid var(--grid-border-thick);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px var(--glass-shadow);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Sudoku Cells */
+.sudoku-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--grid-border-thin);
+  border-bottom: 1px solid var(--grid-border-thin);
+  font-size: clamp(18px, 4.5vw, 30px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+/* Thick borders for 3x3 blocks */
+.sudoku-cell:nth-child(3n) {
+  border-right: 3px solid var(--grid-border-thick);
+}
+.sudoku-cell:nth-child(9n) {
+  border-right: none;
+}
+.sudoku-cell:nth-child(n+19):nth-child(-n+27),
+.sudoku-cell:nth-child(n+46):nth-child(-n+54) {
+  border-bottom: 3px solid var(--grid-border-thick);
+}
+.sudoku-cell:nth-child(n+73):nth-child(-n+81) {
+  border-bottom: none;
+}
+
+/* Cell States styling */
+.sudoku-cell.original {
+  background-color: var(--cell-bg-original);
+  color: var(--text-original);
+  font-weight: 700;
+}
+
+.sudoku-cell.user-filled {
+  background-color: var(--cell-bg-user);
+  color: var(--text-user);
+}
+
+.sudoku-cell.hovered {
+  background-color: var(--cell-bg-hover);
+}
+
+.sudoku-cell.selected {
+  background-color: var(--cell-bg-selected) !important;
+  box-shadow: inset 0 0 0 3px var(--accent-hover), 0 0 15px var(--accent-hover) !important;
+  z-index: 5 !important;
+}
+
+.sudoku-cell.highlighted {
+  background-color: var(--cell-bg-highlighted);
+}
+
+.sudoku-cell.conflict {
+  color: var(--text-conflict);
+  background-color: var(--cell-bg-conflict);
+  animation: shake 0.3s ease-in-out;
+}
+
+/* Hint state highlighting styles */
+.sudoku-cell.hint-target {
+  background-color: var(--cell-bg-hint-target) !important;
+  box-shadow: inset 0 0 0 2px #22c55e;
+  z-index: 1;
+}
+
+.sudoku-cell.hint-source {
+  background-color: var(--cell-bg-hint-source) !important;
+  box-shadow: inset 0 0 0 2px #eab308;
+  z-index: 1;
+}
+
+.sudoku-cell.hint-related {
+  background-color: var(--cell-bg-hint-related) !important;
+  box-shadow: inset 0 0 0 1px #3b82f6;
+}
+
+.sudoku-cell.hint-eliminated {
+  background-color: var(--cell-bg-hint-eliminated) !important;
+  box-shadow: inset 0 0 0 1.5px #ef4444;
+}
+
+/* Candidate Mini-Grid (3x3) inside cell */
+.candidates-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 90%;
+  height: 90%;
+  pointer-events: none;
+}
+
+.candidate-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(8px, 1.8vw, 11px);
+  color: var(--text-candidate);
+  font-weight: 500;
+  line-height: 1;
+  transition: opacity var(--transition-fast);
+}
+
+.candidate-cell.active {
+  opacity: 1;
+}
+
+.candidate-cell.hidden {
+  opacity: 0;
+}
+
+/* Shaking animation for mistakes */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* Controls Panel (Right Side) */
+.controls-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Difficulty & Action Bar */
+.game-setup {
+  display: flex;
+  gap: 12px;
+}
+
+.difficulty-select {
+  flex: 1;
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.difficulty-select:focus {
+  border-color: var(--primary);
+}
+
+.difficulty-select option {
+  background-color: #1e1e38;
+  color: #fff;
+}
+
+.btn-new-game {
+  background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 15px var(--primary-glow);
+}
+
+.btn-new-game:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--primary-glow);
+  filter: brightness(1.1);
+}
+
+/* Keypad Grid for 1-9 */
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.keypad-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  border-radius: 14px;
+  padding: 18px 0;
+  font-size: 22px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.keypad-btn:hover {
+  background: var(--cell-bg-hover);
+  border-color: var(--primary);
+  transform: scale(1.03);
+}
+
+.keypad-btn:active {
+  transform: scale(0.97);
+}
+
+/* Game Utility Actions Row */
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.action-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  border-radius: 14px;
+  padding: 12px 0;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: all var(--transition-fast);
+}
+
+.action-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.action-btn:hover {
+  background: var(--cell-bg-hover);
+  border-color: var(--primary);
+}
+
+.action-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Toggle Pen/Pencil Input Button styling */
+.action-btn.active-mode {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%);
+  border-color: var(--primary);
+  box-shadow: 0 0 10px var(--primary-glow);
+}
+
+.action-btn.active-mode span {
+  font-weight: 600;
+  color: var(--accent-hover);
+}
+
+/* Details Box / Tip Area */
+.details-panel {
+  background: rgba(15, 23, 42, 0.3);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  max-height: 200px;
+}
+
+.details-panel h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-hover);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.details-content {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.details-highlight {
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+/* Web Worker Loading Spinner overlay */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(13, 13, 22, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+}
+
+.loading-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(139, 92, 246, 0.15);
+  border-left-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  box-shadow: 0 0 20px var(--primary-glow);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 18px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #a78bfa 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.loading-subtext {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Pause Overlay */
+.pause-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(13, 13, 22, 0.8);
+  backdrop-filter: blur(12px);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  z-index: 9;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+}
+
+.pause-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.btn-resume {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+}
+
+.btn-resume:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+}
+
+/* Success Modal Overlay */
+.success-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(13, 13, 22, 0.9);
+  backdrop-filter: blur(16px);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  z-index: 11;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+  padding: 30px;
+  text-align: center;
+}
+
+.success-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.success-icon {
+  font-size: 60px;
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.4)); }
+  50% { transform: scale(1.1); filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.8)); }
+}
+
+.success-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #22c55e;
+}
+
+.success-stats {
+  font-size: 15px;
+  color: var(--text-main);
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  padding: 15px 25px;
+  border-radius: 16px;
+  margin: 15px 0;
+  line-height: 1.8;
+  width: 100%;
+  max-width: 320px;
+}
+
+.success-stats span {
+  font-weight: 600;
+  color: var(--accent-hover);
+}
