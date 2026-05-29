@@ -467,6 +467,30 @@ function renderGrid() {
       sudokuGrid.appendChild(cellEl);
     }
   }
+  
+  updateKeypadStatus();
+}
+
+function isDigitCompleted(d) {
+  let count = 0;
+  for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 9; c++) {
+      if (board[r][c] === d && board[r][c] === solution[r][c]) {
+        count++;
+      }
+    }
+  }
+  return count === 9;
+}
+
+function updateKeypadStatus() {
+  for (let d = 1; d <= 9; d++) {
+    const btn = document.querySelector(`.keypad-btn[data-value="${d}"]`);
+    if (btn) {
+      const completed = isDigitCompleted(d);
+      btn.classList.toggle('completed', completed);
+    }
+  }
 }
 
 // Handle Inputs (Val: 1-9 or 0 for Erase)
