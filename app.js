@@ -40,10 +40,16 @@ const pencilBtn = document.getElementById('pencilBtn');
 const autoCandidatesBtn = document.getElementById('autoCandidatesBtn');
 const clearNotesBtn = document.getElementById('clearNotesBtn');
 const hintBtn = document.getElementById('hintBtn');
-const detailsContent = document.getElementById('detailsContent');
-const themeToggle = document.getElementById('themeToggle');
-const themeSun = document.getElementById('themeSun');
-const themeMoon = document.getElementById('themeMoon');
+
+// UI Overhaul Elements
+const detailsContent = document.getElementById('hintOverlayBody');
+const hintOverlay = document.getElementById('hintOverlay');
+const closeHintBtn = document.getElementById('closeHintBtn');
+const settingsToggleBtn = document.getElementById('settingsToggleBtn');
+const settingsOverlay = document.getElementById('settingsOverlay');
+const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+const settingsThemeToggle = document.getElementById('settingsThemeToggle');
+const themeToggleText = document.getElementById('themeToggleText');
 
 // Overlays
 const loadingOverlay = document.getElementById('loadingOverlay');
@@ -59,6 +65,14 @@ const statDiff = document.getElementById('statDiff');
 const statTime = document.getElementById('statTime');
 const statMistakes = document.getElementById('statMistakes');
 const statTechnique = document.getElementById('statTechnique');
+
+// Helper to display overlay feedback
+function showHintOverlay(content) {
+  if (hintOverlay && detailsContent) {
+    detailsContent.innerHTML = content;
+    hintOverlay.style.display = 'flex';
+  }
+}
 
 // Initialize App
 window.addEventListener('DOMContentLoaded', () => {
@@ -88,12 +102,8 @@ function toggleTheme() {
 }
 
 function updateThemeIcons(theme) {
-  if (theme === 'dark') {
-    themeSun.style.display = 'none';
-    themeMoon.style.display = 'block';
-  } else {
-    themeSun.style.display = 'block';
-    themeMoon.style.display = 'none';
+  if (themeToggleText) {
+    themeToggleText.textContent = theme === 'dark' ? '切換為淺色' : '切換為深色';
   }
 }
 
@@ -257,6 +267,9 @@ function generateOnMainThread(difficulty) {
 function startNewGame(difficulty) {
   stopTimer();
   activeHint = null;
+  if (hintOverlay) {
+    hintOverlay.style.display = 'none';
+  }
   selectedCell = null;
   isPaused = false;
   pauseOverlay.classList.remove('active');
@@ -499,14 +512,15 @@ function handleInput(val) {
         updateStatusDisplays();
         
         // Show wrong filled info
-        detailsContent.innerHTML = `
+        let msg = `
           <span style="color: var(--text-conflict); font-weight: 600;">失誤！</span>填寫的數字與解答不符。<br>
           目前失誤：<strong>${mistakes} / ${maxMistakes}</strong>
         `;
         
         if (mistakes >= maxMistakes) {
-          detailsContent.innerHTML += `<br><br><span style="color: var(--text-conflict); font-weight: 600;">提示：</span>您已達到失誤次數上限，可以繼續作答或重啟新局。`;
+          msg += `<br><br><span style="color: var(--text-conflict); font-weight: 600;">提示：</span>您已達到失誤次數上限，可以繼續作答或重啟新局。`;
         }
+        showHintOverlay(msg);
       }
     }
     
@@ -626,10 +640,10 @@ function triggerHint() {
   }
   
   if (hasMistakes) {
-    detailsContent.innerHTML = `
+    showHintOverlay(`
       <span style="color: var(--text-conflict); font-weight: 600;">無法計算提示！</span><br><br>
       偵測到盤面上有<b>錯誤的填寫值</b>（紅色數字）。請先擦除錯誤填寫，系統才能提供正確的邏輯推理提示。
-    `;
+    `);
     return;
   }
   
@@ -637,7 +651,7 @@ function triggerHint() {
   const state = SudokuEngine.logicalSolve(board);
   
   if (state.solved && state.steps.length === 0) {
-    detailsContent.innerHTML = '此謎題已全部解完，或只剩下唯一的基礎步驟！';
+    showHintOverlay('此謎題已全部解完，或只剩下唯一的基礎步驟！');
     return;
   }
   
@@ -679,12 +693,12 @@ function triggerHint() {
               eliminations: []
             };
             renderGrid();
-            detailsContent.innerHTML = `
+            showHintOverlay(`
               <h3>💡 提示（回溯推導）</h3><br>
               <b>應用技巧：</b>唯一推導 (Fallback)<br><br>
               當前盤面剩餘的邏輯推導排除步驟您均已手動完成！根據唯一解路徑：<br>
               儲存格 <b>(R${r+1}, C${c+1})</b> 必須填入數字 <b style="color: var(--accent-hover); font-size:15px;">${correctVal}</b>。
-            `;
+            `);
             hintFound = true;
             break;
           }
@@ -702,13 +716,13 @@ function triggerHint() {
     // Explanation Formatting
     let techniqueDesc = getChineseTechniqueName(SudokuEngine.logicalSolve(originalBoard).difficulty);
     
-    detailsContent.innerHTML = `
+    showHintOverlay(`
       <h3>💡 邏輯推導步驟</h3><br>
       <b>應用技巧：</b><span style="color: var(--accent-hover); font-weight: 600;">${getStepTechniqueName(step.technique)}</span><br><br>
       <b>推理邏輯：</b><br>
       ${step.description}<br><br>
       <i>（已在盤面上以綠色/黃色/藍色/紅色框線視覺化標記涉及的單元格，您可在其標示處採取行動）</i>
-    `;
+    `);
   } else {
     // Solver got stuck (requires guessing or advanced solver rules not implemented)
     // Give backtrack step as hint
@@ -723,12 +737,12 @@ function triggerHint() {
             eliminations: []
           };
           renderGrid();
-          detailsContent.innerHTML = `
+          showHintOverlay(`
             <h3>💡 提示（回溯推導）</h3><br>
             <b>應用技巧：</b>唯一推導 (Fallback)<br><br>
             當前盤面難度極高，超出標準規則推導範圍。根據全局搜索與唯一解路徑：<br>
             儲存格 <b>(R${r+1}, C${c+1})</b> 必須填入數字 <b style="color: var(--accent-hover); font-size:15px;">${correctVal}</b>。
-          `;
+          `);
           hintFound = true;
           break;
         }
@@ -801,8 +815,39 @@ function loadGame() {
 
 // Event Listeners Configuration
 function initEventListeners() {
-  // Theme toggle
-  themeToggle.addEventListener('click', toggleTheme);
+  // Settings Modal Events
+  if (settingsToggleBtn && settingsOverlay) {
+    settingsToggleBtn.addEventListener('click', () => {
+      settingsOverlay.style.display = 'flex';
+      // Auto pause if game is running
+      if (!isPaused && timerInterval) {
+        togglePause();
+      }
+    });
+  }
+  
+  if (closeSettingsBtn && settingsOverlay) {
+    closeSettingsBtn.addEventListener('click', () => {
+      settingsOverlay.style.display = 'none';
+      // Auto resume if paused by opening settings
+      if (isPaused && pauseOverlay.style.display !== 'flex' && !successOverlay.classList.contains('active')) {
+        togglePause();
+      }
+    });
+  }
+
+  if (settingsThemeToggle) {
+    settingsThemeToggle.addEventListener('click', toggleTheme);
+  }
+
+  // Hint Overlay Dismiss
+  if (closeHintBtn && hintOverlay) {
+    closeHintBtn.addEventListener('click', () => {
+      activeHint = null;
+      hintOverlay.style.display = 'none';
+      renderGrid();
+    });
+  }
   
   // Stats Modal Events
   const statsToggleBtn = document.getElementById('statsToggleBtn');
@@ -841,6 +886,10 @@ function initEventListeners() {
   
   // Game control buttons
   newGameBtn.addEventListener('click', () => {
+    // Auto close settings modal when starting new game from modal
+    if (settingsOverlay) {
+      settingsOverlay.style.display = 'none';
+    }
     startNewGame(difficultySelect.value);
   });
   
@@ -865,7 +914,6 @@ function initEventListeners() {
   pencilBtn.addEventListener('click', () => {
     isPencilMode = !isPencilMode;
     pencilBtn.classList.toggle('active-mode', isPencilMode);
-    pencilBtn.querySelector('span').textContent = isPencilMode ? '草稿 (開)' : '草稿 (關)';
   });
   
   // Auto candidates
@@ -882,18 +930,26 @@ function initEventListeners() {
       }
     }
     renderGrid();
-    detailsContent.innerHTML = '已清除所有網格中的草稿候選數。';
+    showHintOverlay('已清除所有網格中的草稿候選數。');
+    if (settingsOverlay) {
+      settingsOverlay.style.display = 'none';
+    }
+    if (isPaused) {
+      togglePause();
+    }
     saveGame();
   });
   
   // Hint
   hintBtn.addEventListener('click', triggerHint);
   
-  // Keypad Clicking
-  document.querySelectorAll('.keypad-btn').forEach(btn => {
+  // Keypad Clicking (Digits 1-9 only)
+  document.querySelectorAll('.keypad-btn[data-value]').forEach(btn => {
     btn.addEventListener('click', () => {
       const val = parseInt(btn.dataset.value);
-      handleInput(val);
+      if (!isNaN(val)) {
+        handleInput(val);
+      }
     });
   });
   
@@ -950,7 +1006,6 @@ function initEventListeners() {
       e.preventDefault();
       isPencilMode = !isPencilMode;
       pencilBtn.classList.toggle('active-mode', isPencilMode);
-      pencilBtn.querySelector('span').textContent = isPencilMode ? '草稿 (開)' : '草稿 (關)';
     }
   });
   
@@ -961,16 +1016,15 @@ function initEventListeners() {
 
     const gridEl = document.getElementById('sudokuGrid');
     const keypadEl = document.querySelector('.keypad');
-    const actionEl = document.querySelector('.action-grid');
-    const selectEl = document.getElementById('difficultySelect');
+    const bottomActionsEl = document.querySelector('.bottom-actions');
+    const settingsToggleEl = document.getElementById('settingsToggleBtn');
     
-    const isGridClick = gridEl.contains(e.target);
-    const isKeypadClick = keypadEl.contains(e.target);
-    const isActionClick = actionEl.contains(e.target);
-    const isSelectClick = selectEl.contains(e.target);
-    const isNewGameClick = newGameBtn.contains(e.target);
+    const isGridClick = gridEl && gridEl.contains(e.target);
+    const isKeypadClick = keypadEl && keypadEl.contains(e.target);
+    const isActionClick = bottomActionsEl && bottomActionsEl.contains(e.target);
+    const isNewGameClick = (newGameBtn && newGameBtn.contains(e.target)) || (settingsToggleEl && settingsToggleEl.contains(e.target));
     
-    if (!isGridClick && !isKeypadClick && !isActionClick && !isSelectClick && !isNewGameClick) {
+    if (!isGridClick && !isKeypadClick && !isActionClick && !isNewGameClick) {
       selectedCell = null;
       renderGrid();
     }

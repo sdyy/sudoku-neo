@@ -11,53 +11,54 @@
   <main class="app-container" id="app">
     
     <!-- HEADER -->
-    <header>
-      <div class="logo-section">
-        <h1>SUDOKU Neo <span class="version-badge">v1.1.7</span></h1>
-        <p>優雅、智慧的本地端數獨體驗</p>
+    <header class="app-header">
+      <!-- Stats Button on the Left -->
+      <button id="statsToggleBtn" class="header-circle-btn" aria-label="查看歷史紀錄" title="歷史紀錄">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+        </svg>
+      </button>
+      
+      <!-- Title in the Center -->
+      <div class="header-title-section">
+        <h1>SUDOKU Neo <span class="version-badge">v1.2.0</span></h1>
+        <span id="diffDisplay" class="header-difficulty-badge">簡單</span>
       </div>
-      <div class="top-controls">
-        <!-- Stats Button -->
-        <button id="statsToggleBtn" class="theme-btn" aria-label="查看歷史紀錄" title="歷史紀錄">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
-          </svg>
-        </button>
-        <button id="themeToggle" class="theme-btn" aria-label="切換深淺色主題" title="切換主題">
-          <!-- Light Mode Icon (Sun) -->
-          <svg id="themeSun" class="theme-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;">
-            <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-12.37c-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.38.39-1.02 0-1.41zm-12.37 12.37c-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.38.39-1.02 0-1.41z"/>
-          </svg>
-          <!-- Dark Mode Icon (Moon) -->
-          <svg id="themeMoon" class="theme-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M12.3 22h-.1c-5.5 0-10-4.5-10-10 0-4.8 3.5-8.9 8.2-9.8.5-.1 1 .2 1.2.7.2.5 0 1.1-.4 1.4-2.8 2-4.1 5.6-3.1 9 1 3.4 4.1 5.8 7.6 5.8.9 0 1.8-.2 2.6-.5.5-.2 1.1 0 1.4.4.3.4.3 1-.1 1.4-2 2.1-4.8 3.3-7.3 3.3zm-6.2-9.7c0 3.3 2.5 6.1 5.8 6.5-.7.1-1.3.2-2 .2-4.1 0-7.5-3.4-7.5-7.5 0-3.3 2.1-6.1 5.1-7.1-.5.9-.8 1.9-.8 3 0 2.6 1.9 4.7 4.4 4.9-1.8.8-3.6.5-5 .0z"/>
-          </svg>
-        </button>
-      </div>
+      
+      <!-- Settings Button on the Right -->
+      <button id="settingsToggleBtn" class="header-circle-btn" aria-label="遊戲設定" title="遊戲設定">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+          <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+        </svg>
+      </button>
     </header>
 
     <!-- LEFT SIDE: BOARD & PROGRESS INFO -->
     <section class="board-panel">
-      <!-- State Bar -->
-      <div class="info-bar" style="width: 100%;">
-        <div class="info-item">
-          <span class="info-label">目前難度</span>
-          <span id="diffDisplay" class="info-value">簡單</span>
+      <!-- Status Capsules Bar -->
+      <div class="status-capsules-bar">
+        <!-- Mistakes Capsule -->
+        <div class="status-capsule mistakes-capsule" title="失誤次數">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="color: var(--text-conflict);">
+            <path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+          <span id="mistakeDisplay">0 / 3</span>
         </div>
-        <div class="info-item">
-          <span class="info-label">失誤次數</span>
-          <span id="mistakeDisplay" class="info-value">0 / 3</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label">累計時間</span>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span id="timerDisplay" class="info-value timer">00:00</span>
-            <button id="pauseToggleBtn" class="theme-btn" style="width: 28px; height: 28px; border-radius: 8px; padding: 0;" title="暫停遊戲">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-              </svg>
-            </button>
-          </div>
+        
+        <!-- Timer Capsule (including play/pause toggle button inside) -->
+        <div class="status-capsule timer-capsule" title="累計時間與暫停">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm3.3 14.3L11 11.5V6h2v4.5l3.7 2.2-.7 1.6z"/>
+          </svg>
+          <span id="timerDisplay">00:00</span>
+          <button id="pauseToggleBtn" class="capsule-pause-btn" aria-label="暫停/繼續遊戲">
+            <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            </svg>
+            <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="display: none;">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </button>
         </div>
       </div>
 
@@ -69,64 +70,7 @@
 
     <!-- RIGHT SIDE: KEYPAD & ACTIONS -->
     <section class="controls-panel">
-      <!-- Game Setup Panel -->
-      <div class="game-setup">
-        <select id="difficultySelect" class="difficulty-select" aria-label="選擇數獨難度">
-          <option value="Easy">簡單 (Naked/Hidden Single)</option>
-          <option value="Medium">中等 (Pointing/Naked Pair)</option>
-          <option value="Hard">困難 (Hidden Pair/X-Wing)</option>
-          <option value="Expert">專家 (XY-Wing/進階推理)</option>
-        </select>
-        <button id="newGameBtn" class="btn-new-game">新遊戲</button>
-      </div>
-
-      <!-- Action Panel -->
-      <div class="action-grid">
-        <button id="undoBtn" class="action-btn" title="復原一步" disabled>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/>
-          </svg>
-          <span>復原</span>
-        </button>
-        <button id="redoBtn" class="action-btn" title="重做一步" disabled>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z"/>
-          </svg>
-          <span>重做</span>
-        </button>
-        <button id="eraseBtn" class="action-btn" title="清除儲存格">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M15.14 3c-.51 0-1.02.2-1.41.59L2.59 14.73c-.78.78-.78 2.05 0 2.83L5.03 20h15.11l4.27-4.27c.78-.78.78-2.05 0-2.83L16.55 3.59c-.39-.39-.9-.59-1.41-.59zm0 2.12L22 12.98c.2.2.2.51 0 .71l-2.58 2.58-5.32-5.32 2.45-2.45c.2-.2.2-.51 0-.71l-1.41-1.41c-.2-.2-.51-.2-.71 0l-2.45 2.45-2.12-2.12 5.32-5.32c.19-.2.5-.2.7-.2zM9.13 11.23l5.32 5.32-5.74 5.74c-.2.2-.51.2-.71 0L5.3 19.59c-.2-.2-.2-.51 0-.71l3.83-3.83-2.12-2.12-3.83 3.83c-.98.98-.98 2.56 0 3.54l2.7 2.7c.49.49 1.13.73 1.77.73s1.28-.24 1.77-.73l7.86-7.86-5.32-5.32-2.12 2.12z"/>
-          </svg>
-          <span>擦除</span>
-        </button>
-        <button id="pencilBtn" class="action-btn" title="切換草稿模式">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-          </svg>
-          <span>草稿 (關)</span>
-        </button>
-        <button id="autoCandidatesBtn" class="action-btn" title="自動填寫所有空格候選數">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
-          </svg>
-          <span>自動草稿</span>
-        </button>
-        <button id="clearNotesBtn" class="action-btn" title="清除所有草稿數字">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-          </svg>
-          <span>清空草稿</span>
-        </button>
-        <button id="hintBtn" class="action-btn" style="grid-column: span 2; background: linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%); border-color: var(--accent);" title="取得下一步邏輯提示">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="color: var(--accent-hover);">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
-          </svg>
-          <span style="color: var(--accent-hover); font-weight: 600;">邏輯提示</span>
-        </button>
-      </div>
-
-      <!-- Input Keypad -->
+      <!-- Input Keypad (2x5 Grid on Mobile, including Pencil Toggle) -->
       <div class="keypad">
         <button class="keypad-btn" data-value="1">1</button>
         <button class="keypad-btn" data-value="2">2</button>
@@ -137,25 +81,112 @@
         <button class="keypad-btn" data-value="7">7</button>
         <button class="keypad-btn" data-value="8">8</button>
         <button class="keypad-btn" data-value="9">9</button>
+        <!-- Pencil toggle key integrated as the 10th key! -->
+        <button id="pencilBtn" class="keypad-btn pencil-key" title="切換草稿模式">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+          </svg>
+        </button>
       </div>
 
-      <!-- Details Panel for Steps & Guidance -->
-      <div class="details-panel">
-        <h3>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-          </svg>
-          解題指南 & 提示說明
-        </h3>
-        <div id="detailsContent" class="details-content">
-          歡迎使用 <strong>SUDOKU Neo</strong>！<br><br>
-          • 選擇難度後點擊「新遊戲」開始。<br>
-          • 點選網格，使用鍵盤或右側鍵盤填寫。<br>
-          • 切換「草稿」模式來填寫候選輔助數，或點擊「自動草稿」。<br>
-          • 遇到瓶頸時，點選「邏輯提示」獲得教學式步驟分析。
-        </div>
+      <!-- Bottom Circle Action Buttons -->
+      <div class="bottom-actions">
+        <button id="undoBtn" class="circle-action-btn" title="復原一步" disabled>
+          <div class="circle-icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/>
+            </svg>
+          </div>
+          <span>復原</span>
+        </button>
+        
+        <button id="redoBtn" class="circle-action-btn" title="重做一步" disabled>
+          <div class="circle-icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z"/>
+            </svg>
+          </div>
+          <span>重做</span>
+        </button>
+        
+        <button id="eraseBtn" class="circle-action-btn" title="擦除格子數字">
+          <div class="circle-icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M15.14 3c-.51 0-1.02.2-1.41.59L2.59 14.73c-.78.78-.78 2.05 0 2.83L5.03 20h15.11l4.27-4.27c.78-.78.78-2.05 0-2.83L16.55 3.59c-.39-.39-.9-.59-1.41-.59zm0 2.12L22 12.98c.2.2.2.51 0 .71l-2.58 2.58-5.32-5.32 2.45-2.45c.2-.2.2-.51 0-.71l-1.41-1.41c-.2-.2-.51-.2-.71 0l-2.45 2.45-2.12-2.12 5.32-5.32c.19-.2.5-.2.7-.2zM9.13 11.23l5.32 5.32-5.74 5.74c-.2.2-.51.2-.71 0L5.3 19.59c-.2-.2-.2-.51 0-.71l3.83-3.83-2.12-2.12-3.83 3.83c-.98.98-.98 2.56 0 3.54l2.7 2.7c.49.49 1.13.73 1.77.73s1.28-.24 1.77-.73l7.86-7.86-5.32-5.32-2.12 2.12z"/>
+            </svg>
+          </div>
+          <span>消除</span>
+        </button>
+        
+        <button id="hintBtn" class="circle-action-btn" title="取得下一步邏輯提示">
+          <div class="circle-icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
+            </svg>
+          </div>
+          <span>提示</span>
+        </button>
+        
+        <button id="autoCandidatesBtn" class="circle-action-btn" title="自動填寫所有空格候選數">
+          <div class="circle-icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+            </svg>
+          </div>
+          <span>自動草稿</span>
+        </button>
       </div>
     </section>
+
+    <!-- FLOATING HINT OVERLAY CARD -->
+    <div id="hintOverlay" class="hint-overlay-card" style="display: none;">
+      <div class="hint-overlay-header">
+        <h4>💡 邏輯提示說明</h4>
+        <button id="closeHintBtn" class="close-hint-btn" title="關閉提示">&times;</button>
+      </div>
+      <div id="hintOverlayBody" class="hint-overlay-body">
+        <!-- Content injected by JS -->
+      </div>
+    </div>
+
+    <!-- SETTINGS OVERLAY -->
+    <div id="settingsOverlay" class="stats-overlay" style="display: none;">
+      <div class="stats-modal">
+        <div class="stats-modal-header">
+          <h2>⚙️ 遊戲設定與選項</h2>
+          <button id="closeSettingsBtn" class="close-btn" title="關閉設定">&times;</button>
+        </div>
+        <div class="settings-modal-body" style="display: flex; flex-direction: column; gap: 16px; margin: 15px 0;">
+          <div class="setting-item" style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; font-size: 14px; color: var(--text-main); text-align: left;">選擇遊戲難度：</label>
+            <select id="difficultySelect" class="difficulty-select" aria-label="選擇數獨難度" style="width: 100%; box-sizing: border-box;">
+              <option value="Easy">簡單 (Naked/Hidden Single)</option>
+              <option value="Medium">中等 (Pointing/Naked Pair)</option>
+              <option value="Hard">困難 (Hidden Pair/X-Wing)</option>
+              <option value="Expert">專家 (XY-Wing/進階推理)</option>
+            </select>
+          </div>
+          
+          <button id="newGameBtn" class="btn-new-game" style="width: 100%; box-sizing: border-box; text-align: center; justify-content: center; padding: 12px 0;">開始新遊戲</button>
+          
+          <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 8px 0;">
+          
+          <!-- Theme selector setting -->
+          <div class="setting-item" style="display: flex; justify-content: space-between; align-items: center; text-align: left;">
+            <span style="font-weight: 600; font-size: 14px; color: var(--text-main);">深淺色主題：</span>
+            <button id="settingsThemeToggle" class="theme-btn" style="width: auto; height: auto; padding: 6px 12px; border-radius: 6px; font-size: 12px; display: flex; align-items: center; gap: 6px;" title="切換主題">
+              <span id="themeToggleText">切換為淺色</span>
+            </button>
+          </div>
+          
+          <!-- Clear candidates option -->
+          <div class="setting-item" style="display: flex; justify-content: space-between; align-items: center; text-align: left;">
+            <span style="font-weight: 600; font-size: 14px; color: var(--text-main);">清空所有草稿：</span>
+            <button id="clearNotesBtn" class="btn-clear-stats" style="margin: 0; padding: 6px 12px; background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--glass-border); font-size: 12px; border-radius: 6px;" title="清除全盤草稿數字">清空</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- LOADING OVERLAY -->
     <div id="loadingOverlay" class="loading-overlay">
