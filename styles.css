@@ -32,7 +32,7 @@
   --cell-bg-hint-related: rgba(59, 130, 246, 0.25); /* Blue */
   --cell-bg-hint-eliminated: rgba(239, 68, 68, 0.3); /* Reddish */
   
-  --text-original: #ffffff;
+  --text-original: #cbd5e1; /* Soft off-white to reduce brightness of clues */
   --text-user: #56abec; /* Clear light blue for user input */
   --text-candidate: #64748b;
   --text-conflict: #ef4444;
@@ -71,7 +71,7 @@
   --cell-bg-hint-related: rgba(59, 130, 246, 0.18);
   --cell-bg-hint-eliminated: rgba(239, 68, 68, 0.2);
   
-  --text-original: #0f172a;
+  --text-original: #334155; /* Soft charcoal to reduce brightness of clues */
   --text-user: #2563eb;
   --text-candidate: #64748b;
   --text-conflict: #ef4444;
@@ -82,6 +82,7 @@
 /* Color tone shift when Pencil mode is active (Dark mode) */
 body.pencil-active {
   --bg-gradient: radial-gradient(circle at 50% 50%, #17110c 0%, #080605 100%);
+  --card-bg: rgba(28, 20, 13, 0.85); /* Rich dark copper/amber background for the board */
   --grid-border-thick: #b47139; /* Warm copper thick grid line */
   --grid-border-thin: #351c09; /* Deep dark copper thin line */
   --cell-bg-selected: rgba(192, 115, 53, 0.28); /* Soft warm copper selection */
@@ -89,11 +90,14 @@ body.pencil-active {
   --cell-bg-hover: rgba(94, 57, 26, 0.45); /* Same-number cells in amber tone */
   --accent: #d97706; /* Amber primary accent */
   --accent-hover: #b45309; /* Warm brown hover */
+  --keypad-bg: #d97706; /* Amber background for the 1-9 digit keys */
+  --keypad-text: #ffffff; /* White text for the 1-9 digit keys */
 }
 
 /* Light mode shift when Pencil mode is active */
 body[data-theme="light"].pencil-active {
   --bg-gradient: radial-gradient(circle at 50% 50%, #fff7ed 0%, #ffedd5 100%);
+  --card-bg: rgba(254, 243, 199, 0.95); /* Warm soft cream amber background for the board */
   --grid-border-thick: #d97706; /* Rich orange-amber border */
   --grid-border-thin: #fed7aa; /* Very soft orange thin border */
   --cell-bg-selected: rgba(217, 119, 6, 0.18);
@@ -101,6 +105,8 @@ body[data-theme="light"].pencil-active {
   --cell-bg-hover: rgba(251, 146, 60, 0.18);
   --accent: #d97706;
   --accent-hover: #b45309;
+  --keypad-bg: #fbbf24; /* Soft amber/yellow background for the 1-9 digit keys */
+  --keypad-text: #78350f; /* Dark amber text for the 1-9 digit keys */
 }
 
 * {
