@@ -151,7 +151,7 @@ function undo() {
   const prevState = undoStack.pop();
   board = prevState.board;
   candidates = prevState.candidates;
-  mistakes = prevState.mistakes;
+  // mistakes is cumulative and does not decrease on undo
   
   updateHistoryButtons();
   renderGrid();
@@ -173,7 +173,7 @@ function redo() {
   const nextState = redoStack.pop();
   board = nextState.board;
   candidates = nextState.candidates;
-  mistakes = nextState.mistakes;
+  // mistakes is cumulative and does not change on redo
   
   updateHistoryButtons();
   renderGrid();
