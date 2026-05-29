@@ -78,6 +78,7 @@ function showHintOverlay(content) {
 window.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initEventListeners();
+  setPencilMode(false);
   
   // Try to load saved game
   if (!loadGame()) {
@@ -105,6 +106,15 @@ function updateThemeIcons(theme) {
   if (themeToggleText) {
     themeToggleText.textContent = theme === 'dark' ? '切換為淺色' : '切換為深色';
   }
+}
+
+// Pencil Mode Control
+function setPencilMode(active) {
+  isPencilMode = active;
+  if (pencilBtn) {
+    pencilBtn.classList.toggle('active-mode', isPencilMode);
+  }
+  document.body.classList.toggle('pencil-active', isPencilMode);
 }
 
 // History Management
@@ -912,8 +922,7 @@ function initEventListeners() {
   
   // Pencil Mode
   pencilBtn.addEventListener('click', () => {
-    isPencilMode = !isPencilMode;
-    pencilBtn.classList.toggle('active-mode', isPencilMode);
+    setPencilMode(!isPencilMode);
   });
   
   // Auto candidates
@@ -1004,8 +1013,7 @@ function initEventListeners() {
     // Spacebar toggles pencil mode
     else if (e.key === ' ') {
       e.preventDefault();
-      isPencilMode = !isPencilMode;
-      pencilBtn.classList.toggle('active-mode', isPencilMode);
+      setPencilMode(!isPencilMode);
     }
   });
   
